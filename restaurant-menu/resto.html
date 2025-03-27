@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Restaurants</title>
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="resto.css" />
+    <style>
+      .modal-body ul#item-ingredients {
+        list-style-type: disc;
+        margin-left: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg bg-black fixed-top">
+      <div class="container-fluid py-1">
+        <a class="navbar-brand" href="../feast_plus/index.html"
+          ><img src="../feast_plus/img/logo-dark.png" class="brand-logo"
+        /></a>
+        <button
+          class="navbar-toggler toggler-btn"
+          type="button"
+          data-bs-toggle="offcanvas"
+          data-bs-target="#offcanvasNavbar"
+          aria-controls="offcanvasNavbar"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div
+          class="offcanvas offcanvas-end bg-black"
+          tabindex="-1"
+          id="offcanvasNavbar"
+          aria-labelledby="offcanvasNavbarLabel"
+        >
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title nav-link" id="offcanvasNavbarLabel">
+              Feast+
+            </h5>
+            <button
+              type="button"
+              class="btn-close bg-white"
+              data-bs-dismiss="offcanvas"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="offcanvas-body">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 mx-auto">
+              <li class="nav-item">
+                <a
+                  class="nav-link"
+                  aria-current="page"
+                  href="../feast_plus/index.html"
+                  >Home</a
+                >
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="../feast_plus/cart.html"></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="../profile/profile.html">Profile</a>
+              </li>
+
+              <li class="nav-item">
+                <a class="nav-link" href="resto.html"
+                  >Restaurants</a
+                >
+              </li>
+            </ul>
+            <form class="d-flex mt-3 mt-lg-0" role="search">
+              <input
+                class="form-control me-2"
+                type="search"
+                placeholder="Search"
+                aria-label="Search"
+              />
+              <button class="btn btn-outline-success nav-search" type="submit">
+                Search
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+      <h2 class="text-center mb-4">Featured Restaurants</h2>
+      <div class="restaurant-list" id="restaurant-list"></div>
+    </div>
+
+    <div
+      class="modal fade"
+      id="itemModal"
+      tabindex="-1"
+      aria-labelledby="itemModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="itemModalLabel"></h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <img id="item-image" class="img-fluid rounded mb-3" alt="Food" />
+            <p id="item-description"></p>
+            <!-- <h6>Ingredients:</h6> -->
+            <ul id="item-ingredients"></ul>
+            <div class="d-flex justify-content-between align-items-center">
+              <span id="item-price" class="text-primary fw-bold fs-5"></span>
+              <button id="view-menu" class="btn btn-primary">
+                View Menu
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const restaurantsData = [
+          {
+            name: "McDonald's",
+            address: "123 Main St, Chennai",
+            distance: "2 km",
+            image: "./food-images/mcd.jpg",
+            rating: 4.2,
+            cuisine: "Fast Food",
+            menuUrl: "/restaurant/mcdonalds",
+            ingredients: [
+              "Beef Patty",
+              "Lettuce",
+              "Tomato",
+              "Cheese",
+              "Bun",
+              "Sauce",
+            ],
+          },
+          {
+            name: "Domino's Pizza",
+            address: "456 Elm St, Chennai",
+            distance: "3 km",
+            image: "./food-images/dominos.jpg",
+            rating: 4.5,
+            cuisine: "Pizza",
+            menuUrl: "/restaurant/dominos",
+            ingredients: ["Dough", "Tomato Sauce", "Cheese", "Pepperoni"],
+          },
+          {
+            name: "Cafe Coffee Day",
+            address: "789 Oak St, Chennai",
+            distance: "1.5 km",
+            image: "./food-images/cafe coffe.png",
+            rating: 3.9,
+            cuisine: "Cafe",
+            menuUrl: "/restaurant/ccd",
+            ingredients: ["Coffee Beans", "Milk", "Sugar"],
+          },
+          {
+            name: "Guntur Kaaram",
+            address: "101 Pine St, Chennai",
+            distance: "4 km",
+            image: "./food-images/gntk.png",
+            rating: 4.8,
+            cuisine: "South Indian",
+            menuUrl: "/restaurant/gunturkaaram",
+            ingredients: ["Rice", "Lentils", "Vegetables", "Spices", "Ghee"],
+          },
+          {
+            name: "New Punjabhi Dhabha",
+            address: "202 Maple St, Chennai",
+            distance: "2.5 km",
+            image: "./food-images/dhaba.jpg",
+            rating: 4.1,
+            cuisine: "North Indian",
+            menuUrl: "/restaurant/punjabidhabha",
+            ingredients: ["Wheat Flour", "Potatoes", "Spices", "Onions"],
+          },
+          {
+            name: "Hyderabad Biryani",
+            address: "303 Birch St, Chennai",
+            distance: "3.5 km",
+            image: "./food-images/bir.png",
+            rating: 4.6,
+            cuisine: "Biryani",
+            menuUrl: "/restaurant/hyderabadbiryani",
+            ingredients: [
+              "Basmati Rice",
+              "Meat",
+              "Yogurt",
+              "Onions",
+              "Spices",
+              "Saffron",
+            ],
+          },
+          {
+            name: "KFC",
+            address: "404 Cedar St, Chennai",
+            distance: "2 km",
+            image: "./food-images/kfc.png",
+            rating: 4.0,
+            cuisine: "Fast Food",
+            menuUrl: "/restaurant/kfc",
+            ingredients: ["Chicken", "Flour", "Spices", "Oil"],
+          },
+          {
+            name: "Subway",
+            address: "505 Spruce St, Chennai",
+            distance: "2.2 km",
+            image: "./food-images/subway.png",
+            rating: 3.7,
+            cuisine: "Sandwiches",
+            menuUrl: "/restaurant/subway",
+            ingredients: [
+              "Bread",
+              "Lettuce",
+              "Tomato",
+              "Meat/Vegetables",
+              "Cheese",
+              "Sauce",
+            ],
+          },
+          {
+            name: "Starbucks",
+            address: "606 Willow St, Chennai",
+            distance: "1.8 km",
+            image: "./food-images/sb.jpg",
+            rating: 4.3,
+            cuisine: "Cafe",
+            menuUrl: "/restaurant/starbucks",
+            ingredients: ["Coffee", "Milk", "Flavorings"],
+          },
+          {
+            name: "Burger King",
+            address: "707 Maple St, Chennai",
+            distance: "2.5 km",
+            image: "./food-images/bg.png",
+            rating: 3.8,
+            cuisine: "Fast Food",
+            menuUrl: "/restaurant/burgerking",
+            ingredients: [
+              "Beef Patty",
+              "Lettuce",
+              "Tomato",
+              "Onions",
+              "Pickles",
+              "Bun",
+              "Sauce",
+            ],
+          },
+          {
+            name: "Pizza Hut",
+            address: "808 Pine St, Chennai",
+            distance: "3 km",
+            image: "./food-images/piz.png",
+            rating: 4.4,
+            cuisine: "Pizza",
+            menuUrl: "/restaurant/pizzahut",
+            ingredients: [
+              "Dough",
+              "Tomato Sauce",
+              "Cheese",
+              "Various Toppings",
+            ],
+          },
+          {
+            name: "A2B Pure Veg",
+            address: "909 Elm St, Chennai",
+            distance: "3.2 km",
+            image: "./food-images/a2b.png",
+            rating: 4.7,
+            cuisine: "South Indian",
+            menuUrl: "/restaurant/a2b",
+            ingredients: ["Rice", "Lentils", "Vegetables", "Spices"],
+          },
+        ];
+
+        const restaurantListContainer =
+          document.getElementById("restaurant-list");
+        const itemModal = new bootstrap.Modal(
+          document.getElementById("itemModal")
+        );
+        const modalTitle = document.getElementById("itemModalLabel");
+        const modalImage = document.getElementById("item-image");
+        const modalDescription = document.getElementById("item-description");
+        const modalIngredients = document.getElementById("item-ingredients");
+        const modalPrice = document.getElementById("item-price");
+        const viewMenuButton = document.getElementById("view-menu");
+
+        restaurantsData.forEach((restaurant) => {
+          const card = document.createElement("div");
+          card.classList.add("restaurant-card");
+          card.innerHTML = `
+                    <img src="${restaurant.image}" alt="${restaurant.name}">
+                    <div class="restaurant-info">
+                        <h4>${restaurant.name}</h4>
+                        <div class="restaurant-meta">
+                            <span class="rating">⭐ ${restaurant.rating}</span>
+                            <span>${restaurant.cuisine}</span>
+                        </div>
+                        <p class="mb-1">Address: ${restaurant.address}</p>
+                        <p class="mb-1">Distance: ${restaurant.distance}</p>
+                        <button class="view-menu" data-restaurant-name="${restaurant.name}">View Details</button>
+                    </div>
+                `;
+          restaurantListContainer.appendChild(card);
+        });
+
+        restaurantListContainer.addEventListener("click", function (event) {
+          if (event.target.classList.contains("view-menu")) {
+            const restaurantName = event.target.dataset.restaurantName;
+            const selectedRestaurant = restaurantsData.find(
+              (r) => r.name === restaurantName
+            );
+            if (selectedRestaurant) {
+              openRestaurantDetailsModal(selectedRestaurant);
+            }
+          }
+        });
+
+        function openRestaurantDetailsModal(restaurant) {
+          modalTitle.textContent = restaurant.name;
+          modalImage.src = restaurant.image;
+          modalImage.alt = restaurant.name;
+          modalDescription.textContent = `Cuisine: ${restaurant.cuisine} | Address: ${restaurant.address} | Distance: ${restaurant.distance}`;
+          modalPrice.textContent = `Rating: ⭐ ${restaurant.rating}`;
+          // modalIngredients.innerHTML = ""; // Clear previous ingredients
+          // if (restaurant.ingredients && restaurant.ingredients.length > 0) {
+          //   restaurant.ingredients.forEach((ingredient) => {
+          //     const li = document.createElement("li");
+          //     li.textContent = ingredient;
+          //     modalIngredients.appendChild(li);
+          //   });
+          // } else {
+          //   const li = document.createElement("li");
+          //   li.textContent = "Ingredients not available.";
+          //   modalIngredients.appendChild(li);
+          // }
+
+          viewMenuButton.onclick = () => {
+            window.location.href = "../products/product.html";
+
+            itemModal.hide();
+          };
+
+          itemModal.show();
+        }
+       });
+      
+    </script>
+
+    <!-- footer section -->
+    <footer class="footer-section">
+      <div class="container">
+        <div class="footer-cta pt-5 pb-5">
+          <div class="row">
+            <div class="col-xl-4 col-md-4 mb-30">
+              <div class="single-cta">
+                <i class="fas fa-map-marker-alt footer-row-icon"></i>
+                <div class="cta-text">
+                  <h4>Find us</h4>
+                  <span>SIPCOT IT Park, Chennai</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-4 col-md-4 mb-30">
+              <div class="single-cta">
+                <i class="fas fa-phone footer-row-icon"></i>
+                <div class="cta-text">
+                  <h4>Call us</h4>
+                  <span>+91 7744339128</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-4 col-md-4 mb-30">
+              <div class="single-cta">
+                <i class="far fa-envelope-open footer-row-icon"></i>
+                <div class="cta-text">
+                  <h4>Mail us</h4>
+                  <span>mail@info.com</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer-content pt-5 pb-5">
+          <div class="row">
+            <div class="col-xl-4 col-lg-4 mb-50">
+              <div class="footer-widget">
+                <div class="footer-logo">
+                  <a href="index.html"
+                    ><img
+                      src="../feast_plus/img/logo-dark.png"
+                      class="img-fluid"
+                      alt="logo"
+                  /></a>
+                </div>
+                <div class="footer-text">
+                  <p>
+                    Lorem ipsum dolor sit amet, consec tetur adipisicing elit,
+                    sed do eiusmod tempor incididuntut consec tetur adipisicing
+                    elit,Lorem ipsum dolor sit amet.
+                  </p>
+                </div>
+                <div class="footer-social-icon">
+                  <span>Follow us</span>
+                  <a href="#"><i class="fab fa-facebook-f facebook-bg"></i></a>
+                  <a href="#"><i class="fab fa-twitter twitter-bg"></i></a>
+                  <a href="#"><i class="fab fa-google-plus-g google-bg"></i></a>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-4 col-lg-4 col-md-6 mb-30">
+              <div class="footer-widget">
+                <div class="footer-widget-heading">
+                  <h3>Useful Links</h3>
+                </div>
+                <ul>
+                  <li><a href="../feast_plus/index.html">Home</a></li>
+                  <li><a href="#">about</a></li>
+                  <li><a href="#">services</a></li>
+                  <li><a href="#">portfolio</a></li>
+                  <li><a href="#">Contact</a></li>
+                  <li><a href="#">About us</a></li>
+                  <li><a href="#">Our Services</a></li>
+                  <li><a href="#">Expert Team</a></li>
+                  <li><a href="#">Contact us</a></li>
+                  <li><a href="#">Latest News</a></li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-xl-4 col-lg-4 col-md-6 mb-50">
+              <div class="footer-widget">
+                <div class="footer-widget-heading">
+                  <h3>Subscribe</h3>
+                </div>
+                <div class="footer-text mb-25">
+                  <p>
+                    Don’t miss to subscribe to our new feeds, kindly fill the
+                    form below.
+                  </p>
+                </div>
+                <div class="subscribe-form">
+                  <form action="#">
+                    <input type="text" placeholder="Email Address" />
+                    <button><i class="fab fa-telegram-plane"></i></button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="copyright-area">
+        <div class="container">
+          <div class="row">
+            <div class="col-xl-6 col-lg-6 text-center text-lg-left">
+              <div class="copyright-text">
+                <p>
+                  Copyright &copy; 2025, All Right Reserved
+                  <span>@feast+</span>
+                </p>
+              </div>
+            </div>
+            <div class="col-xl-6 col-lg-6 d-none d-lg-block text-right">
+              <div class="footer-menu">
+                <ul>
+                  <li><a href="../feast_plus/index.html">Home</a></li>
+                  <li><a href="#">Terms</a></li>
+                  <li><a href="#">Privacy</a></li>
+                  <li><a href="#">Policy</a></li>
+                  <li><a href="#">Contact</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+  </body>
+</html>
